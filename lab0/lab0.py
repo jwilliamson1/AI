@@ -70,10 +70,15 @@ def depth(expr):
 # Problem 2.3: Tree indexing
 
 def tree_ref(tree, index):
-    if (not tree):
+    if (not tree or not index):
       return
-    elif (index == 0):
-      return tree
+    found = tree[index[0]]
+    if found and index[1:]:
+      return tree_ref(found, index[1:])
+    elif found:
+      return found
+    else:
+      return
 
 # Section 3: Symbolic algebra
 

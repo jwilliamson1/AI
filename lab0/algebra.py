@@ -165,7 +165,14 @@ def do_multiply(expr1, expr2):
     * expr1 is a Sum, and expr2 is a Product
     * expr1 is a Product, and expr2 is a Sum
     * expr1 is a Product, and expr2 is a Product
-
+    """
+    if isinstance(expr1, Product) and isinstance(expr2, Product):
+      for term in expr2:
+        expr1.append(term)
+      return expr1
+    else:
+      raise NotImplementedError
+    """
     You need to create Sums or Products that represent what you get by
     applying the algebraic rules of multiplication to these expressions,
     and simplifying.
@@ -173,6 +180,4 @@ def do_multiply(expr1, expr2):
     Look above for details on the Sum and Product classes. The Python operator
     '*' will not help you.
     """
-    # Replace this with your solution.
-    raise NotImplementedError
-
+      # Replace this with your solution.

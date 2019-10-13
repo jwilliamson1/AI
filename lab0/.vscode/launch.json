@@ -6,7 +6,7 @@
   "configurations": [
   
     {
-      "name": "Python: Current File",
+      "name": "lab0",
       "type": "python",
       "request": "launch",
       "program": "c:\\code\\AI\\lab0\\tester.py",

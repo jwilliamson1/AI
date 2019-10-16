@@ -179,9 +179,11 @@ def do_multiply(expr1, expr2):
       return ret
     elif isinstance(expr1, Product) and isinstance(expr2, Sum):
       productsList = []
-      for aTerm in expr2
-        prod = list(aTerm).append(list(expr1))
-      ret = Sum([productsList])
+      for aTerm in expr2:
+        listOfTerms = list(expr1)
+        listOfTerms.append(aTerm)
+        productsList.append(Product(listOfTerms))
+      ret = Sum(productsList)
       return ret
     else:
       raise NotImplementedError

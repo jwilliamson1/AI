@@ -15,8 +15,11 @@ from zookeeper import ZOOKEEPER_RULES
 
 
 def backchain_to_goal_tree(rules, hypothesis):
-    raise NotImplementedError
-
+    for rule in rules:
+      questions = []
+      for exp in rule.consequent:
+        result = match(exp, hypothesis)
+    return
 # Here's an example of running the backward chainer - uncomment
 # it to see it work:
-#print backchain_to_goal_tree(ZOOKEEPER_RULES, 'opus is a penguin')
+print backchain_to_goal_tree(ZOOKEEPER_RULES, 'opus is a penguin')

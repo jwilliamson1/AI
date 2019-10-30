@@ -1,0 +1,6 @@
+if string is less than max and no acc ignore it;
+
+if string is less than max and there is an acc then ignore string and add acc to len
+
+if string is > max and there is an acc and non terminated == MAX then copy string and add acc to len
+ if it is terminated then add acc to len and set acc to 0

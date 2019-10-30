@@ -172,10 +172,11 @@ def do_multiply(expr1, expr2):
       return expr1
     elif isinstance(expr1, Sum) and isinstance(expr2, Product):
       productsList = []
-      for t1 in expr1:
-        for t2 in expr2:
-          productsList += Product([t1, t2])
-      ret = Sum([productsList])
+      for aTerm in expr1:
+        listOfTerms = list(expr2)
+        listOfTerms.append(aTerm)
+        productsList.append(Product(listOfTerms))
+      ret = Sum(productsList)
       return ret
     elif isinstance(expr1, Product) and isinstance(expr2, Sum):
       productsList = []

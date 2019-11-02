@@ -223,7 +223,7 @@ from backchain import backchain_to_goal_tree
 ##; Section 3: Survey ##
 # Please answer these questions inside the double quotes.
 
-HOW_MANY_HOURS_THIS_PSET_TOOK = ''
-WHAT_I_FOUND_INTERESTING = ''
-WHAT_I_FOUND_BORING = ''
+HOW_MANY_HOURS_THIS_PSET_TOOK = '3'
+WHAT_I_FOUND_INTERESTING = 'Thinking through the back chaining'
+WHAT_I_FOUND_BORING = 'a little too spoon fed'
 

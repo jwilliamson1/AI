@@ -1,0 +1,14 @@
+antecedent matches then consequent adds or deletes data
+
+data that appears ealier takes precedence
+
+each pattern in an and clause will have the variables of the previous pattern
+
+matching antecedent fires the rule
+
+when a rule fires the system changes data and starts again from the first rule.
+
+questions: antecedent matching matches but may not fire ( if it can't change the data)
+
+where does data get added? I guess it doesn't matter
+

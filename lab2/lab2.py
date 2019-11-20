@@ -51,6 +51,7 @@ def bfs(graph, start, goal):
       path = agenda.pop()
       current = path[0]
       if isPathToGoal(path, goal):
+        path.reverse()
         return path
       else:
         nodes = graph.get_connected_nodes(current)
@@ -68,6 +69,7 @@ def dfs(graph, start, goal):
       path = agenda.pop()
       current = path[0]
       if isPathToGoal(path, goal):
+        path.reverse()
         return path
       else:
         nodes = graph.get_connected_nodes(current)

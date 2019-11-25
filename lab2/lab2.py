@@ -1,3 +1,4 @@
+from operator import itemgetter
 # Fall 2012 6.034 Lab 2: Search
 #
 # Your answers for the true and false questions will be in the following form.  
@@ -84,7 +85,25 @@ def dfs(graph, start, goal):
 ## Remember that hill-climbing is a modified version of depth-first search.
 ## Search direction should be towards lower heuristic values to the goal.
 def hill_climbing(graph, start, goal):
-    raise NotImplementedError
+    agenda = [ [start ]]           
+    while agenda:      
+      path = agenda.pop()
+      current = path[0]
+      if isPathToGoal(path, goal):
+        path.reverse()
+        return path
+      else:
+        nodes = graph.get_connected_nodes(current)
+        unsortedNodes = []
+        for n in nodes:
+          if n not in path:
+            lengthToNode = graph.get_heuristic(current, n)
+            newPath = [n] + path
+            lengthAndPath = (lengthToNode, newPath)
+            unsortedNodes.append(newPath)
+        unsortedNodes.sort(key=itemgetter(0))
+        agenda.append(map(lambda tup: tup[0], unsortedNodes))
+    return None
 
 ## Now we're going to implement beam search, a variation on BFS
 ## that caps the amount of memory used to store paths.  Remember,
@@ -100,8 +119,12 @@ def beam_search(graph, start, goal, beam_width):
 ## This function takes in a graph and a list of node names, and returns
 ## the sum of edge lengths along the path -- the total distance in the path.
 def path_length(graph, node_names):
-    raise NotImplementedError
-
+    if len(node_names) < 2:
+      return 0
+    acc = 0
+    for i in range(0, len(node_names)-1):
+      acc += graph.get_edge(node_names[i], node_names[i+1]).length
+    return acc
 
 def branch_and_bound(graph, start, goal):
     raise NotImplementedError

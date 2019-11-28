@@ -94,15 +94,17 @@ def hill_climbing(graph, start, goal):
         return path
       else:
         nodes = graph.get_connected_nodes(current)
-        unsortedNodes = []
+        toBeSorted = []
         for n in nodes:
           if n not in path:
             lengthToNode = graph.get_heuristic(current, n)
             newPath = [n] + path
             lengthAndPath = (lengthToNode, newPath)
-            unsortedNodes.append(newPath)
-        unsortedNodes.sort(key=itemgetter(0))
-        agenda.append(map(lambda tup: tup[0], unsortedNodes))
+            toBeSorted.append(lengthAndPath)
+        toBeSorted.sort(key=itemgetter(0),reverse=True)
+        nodesOnly = map(lambda tup: tup[1], toBeSorted)
+        for n in nodesOnly:
+          agenda.append(n)
     return None
 
 ## Now we're going to implement beam search, a variation on BFS

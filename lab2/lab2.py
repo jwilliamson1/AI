@@ -117,7 +117,37 @@ def hill_climbing(graph, start, goal):
 ## The k top candidates are to be determined using the 
 ## graph get_heuristic function, with lower values being better values.
 def beam_search(graph, start, goal, beam_width):
-    raise NotImplementedError
+    extended = []
+    agenda = [ [start ] ]           
+    while agenda:      
+      if len(agenda) > beam_width:
+        raise IndexError
+      path = agenda.pop()
+##      currentHeuristic = hPath[0]
+      ##path = hPath[1]
+      currentNode = path[0]
+      if isPathToGoal(path, goal):
+        path.reverse()
+        return path
+      else:
+        nodes = graph.get_connected_nodes(currentNode)
+        toBeSorted = []
+        extended.append(currentNode)
+        for n in nodes:
+          if n not in path and n not in extended:            
+            lengthToNode = graph.get_heuristic(n, goal) ## + currentHeuristic
+            newPath = [n] + path
+            lengthAndPath = (lengthToNode, newPath)
+            toBeSorted.append(lengthAndPath)
+        toBeSorted.sort(key=itemgetter(0),reverse=True)
+        nodesOnly = map(lambda tup: tup[1], toBeSorted)
+        count = 0
+        for n in nodesOnly[beam_width-1]:
+          if len(agenda) == beam_width:
+            agenda.pop()
+          agenda = [n] + agenda
+          count = count + 1
+    return None
 
 ## Now we're going to try optimal search.  The previous searches haven't
 ## used edge distances in the calculation.

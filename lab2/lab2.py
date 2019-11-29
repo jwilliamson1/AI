@@ -85,19 +85,23 @@ def dfs(graph, start, goal):
 ## Remember that hill-climbing is a modified version of depth-first search.
 ## Search direction should be towards lower heuristic values to the goal.
 def hill_climbing(graph, start, goal):
-    agenda = [ [start ]]           
+    extended = []
+    agenda = [ [start ] ]           
     while agenda:      
       path = agenda.pop()
-      current = path[0]
+##      currentHeuristic = hPath[0]
+      ##path = hPath[1]
+      currentNode = path[0]
       if isPathToGoal(path, goal):
         path.reverse()
         return path
       else:
-        nodes = graph.get_connected_nodes(current)
+        nodes = graph.get_connected_nodes(currentNode)
         toBeSorted = []
+        extended.append(currentNode)
         for n in nodes:
-          if n not in path:
-            lengthToNode = graph.get_heuristic(current, n)
+          if n not in path and n not in extended:            
+            lengthToNode = graph.get_heuristic(n, goal) ## + currentHeuristic
             newPath = [n] + path
             lengthAndPath = (lengthToNode, newPath)
             toBeSorted.append(lengthAndPath)
@@ -146,6 +150,6 @@ def is_admissible(graph, goal):
 def is_consistent(graph, goal):
     raise NotImplementedError
 
-HOW_MANY_HOURS_THIS_PSET_TOOK = ''
-WHAT_I_FOUND_INTERESTING = ''
-WHAT_I_FOUND_BORING = ''
+HOW_MANY_HOURS_THIS_PSET_TOOK = '10'
+WHAT_I_FOUND_INTERESTING = 'asdf'
+WHAT_I_FOUND_BORING = 'asdf'

@@ -184,7 +184,29 @@ def branch_and_bound(graph, start, goal):
     return None
 
 def a_star(graph, start, goal):
-    raise NotImplementedError
+    agenda = [ (0, [start]) ]
+    extended = []
+    while agenda:
+      agenda.sort(reverse=True)
+      path = agenda.pop()
+      if isPathToGoal(path[1], goal):
+          path[1].reverse()
+          return path[1]
+      else:
+        currentLengthAndEstimate = path[0]
+        currentPath = path[1]
+        currentNode = currentPath[0]
+        nodes = graph.get_connected_nodes(currentNode)        
+        for n in nodes:
+          extended.append(n)
+          if n not in currentPath:
+            length = path_length(graph, [currentNode, n])
+            estimate = graph.get_heuristic(n, goal)       
+            newLength = length + estimate + currentLengthAndEstimate 
+            newPath = [n] + currentPath
+            lengthAndPath = (newLength, newPath)
+            agenda.append(lengthAndPath)
+    return None
 
 
 ## It's useful to determine if a graph has a consistent and admissible

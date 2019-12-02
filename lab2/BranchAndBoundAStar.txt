@@ -1,0 +1,13 @@
+branch and bound take currently shortest path
+	0S
+100A 3B  4E 4F
+
+      7D     
+
+tag path with current path length
+
+use extended list
+
+A* 
+admissibility - underestimate or equal estimate never overestimate
+consistency - 

@@ -160,7 +160,26 @@ def path_length(graph, node_names):
     return acc
 
 def branch_and_bound(graph, start, goal):
-    raise NotImplementedError
+    agenda = [ (0, [start]) ]
+    while agenda:
+      agenda.sort(reverse=True)
+      path = agenda.pop()
+      if isPathToGoal(path[1], goal):
+          path[1].reverse()
+          return path[1]
+      else:
+        currentLength = path[0]
+        currentPath = path[1]
+        currentNode = currentPath[0]
+        nodes = graph.get_connected_nodes(currentNode)        
+        for n in nodes:
+          if n not in currentPath:
+            length = path_length(graph, [currentNode, n])            
+            newLength = length + currentLength
+            newPath = [n] + currentPath
+            lengthAndPath = (newLength, newPath)
+            agenda.append(lengthAndPath)
+    return None
 
 def a_star(graph, start, goal):
     raise NotImplementedError

@@ -1,0 +1,16 @@
+pop first path
+it is empty
+
+add node to list at current level
+
+[a,d]
+
+for int i to beam add to level
+[n1,n2,nw]
+
+for n in l1
+add to array
+
+sort array
+
+for int i to beam add to level

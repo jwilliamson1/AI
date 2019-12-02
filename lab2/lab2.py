@@ -161,6 +161,7 @@ def path_length(graph, node_names):
 
 def branch_and_bound(graph, start, goal):
     agenda = [ (0, [start]) ]
+    extended = []
     while agenda:
       agenda.sort(reverse=True)
       path = agenda.pop()
@@ -173,6 +174,7 @@ def branch_and_bound(graph, start, goal):
         currentNode = currentPath[0]
         nodes = graph.get_connected_nodes(currentNode)        
         for n in nodes:
+          extended.append(n)
           if n not in currentPath:
             length = path_length(graph, [currentNode, n])            
             newLength = length + currentLength

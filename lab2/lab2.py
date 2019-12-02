@@ -225,7 +225,16 @@ def a_star(graph, start, goal):
 ## consistent, but not admissible?
 
 def is_admissible(graph, goal):
-    raise NotImplementedError
+    seen = []
+    for outerNode in graph.nodes:
+      paths = graph.get_connected_nodes(outerNode)
+      for connectedNodes in paths:
+        if outerNode != connectedNodes:
+          h = graph.get_heuristic(outerNode, connectedNodes)
+          cost = path_length(graph, [outerNode, connectedNodes ])
+          if h > cost:
+            return False
+    return True
 
 def is_consistent(graph, goal):
     raise NotImplementedError

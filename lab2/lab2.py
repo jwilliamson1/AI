@@ -205,7 +205,12 @@ def a_star(graph, start, goal):
             newLength = length + estimate + currentLengthAndEstimate 
             newPath = [n] + currentPath
             lengthAndPath = (newLength, newPath)
-            agenda.append(lengthAndPath)
+            containsShorterPath = False
+            for path in agenda:
+              if path[1][0] == lengthAndPath[1][0] and path[0] <= lengthAndPath[0]:
+                containsShorterPath = True
+            if not containsShorterPath:
+              agenda.append(lengthAndPath)
     return None
 
 

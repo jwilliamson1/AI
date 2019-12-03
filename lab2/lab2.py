@@ -157,8 +157,6 @@ def path_length(graph, node_names):
     acc = 0
     for i in range(0, len(node_names)-1):
       edge = graph.get_edge(node_names[i], node_names[i+1])
-      if not edge:
-        raise EOFError
       acc += edge.length
     return acc
 
@@ -236,7 +234,16 @@ def is_admissible(graph, goal):
   return True
 
 def is_consistent(graph, goal):
-    raise NotImplementedError
+    if not is_admissible(graph,goal):
+        return False
+    for edge in graph.edges:
+        if graph.get_heuristic(edge.node1,goal)>edge.length+graph.get_heuristic(edge.node2,goal):
+            return False
+        if graph.get_heuristic(edge.node2,goal)>edge.length+graph.get_heuristic(edge.node1,goal):
+            return False
+    if graph.get_heuristic(goal,goal) !=0:
+        return False
+    return True
 
 HOW_MANY_HOURS_THIS_PSET_TOOK = '10'
 WHAT_I_FOUND_INTERESTING = 'asdf'

@@ -156,7 +156,10 @@ def path_length(graph, node_names):
       return 0
     acc = 0
     for i in range(0, len(node_names)-1):
-      acc += graph.get_edge(node_names[i], node_names[i+1]).length
+      edge = graph.get_edge(node_names[i], node_names[i+1])
+      if not edge:
+        raise EOFError
+      acc += edge.length
     return acc
 
 def branch_and_bound(graph, start, goal):
@@ -224,17 +227,13 @@ def a_star(graph, start, goal):
 ## admissible, but not consistent.  Have you seen any graphs that are
 ## consistent, but not admissible?
 
-def is_admissible(graph, goal):
-    seen = []
-    for outerNode in graph.nodes:
-      paths = graph.get_connected_nodes(outerNode)
-      for connectedNodes in paths:
-        if outerNode != connectedNodes:
-          h = graph.get_heuristic(outerNode, connectedNodes)
-          cost = path_length(graph, [outerNode, connectedNodes ])
-          if h > cost:
-            return False
-    return True
+def is_admissible(graph, goal):    
+  for node in graph.nodes:
+    length = path_length(graph, branch_and_bound(graph, node, goal))
+    heuristic = graph.get_heuristic(node, goal)
+    if heuristic > length:
+      return False
+  return True
 
 def is_consistent(graph, goal):
     raise NotImplementedError

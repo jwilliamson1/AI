@@ -1,0 +1,10 @@
+search: games, minimax, alpha-beta
+branching factor
+scoring polynomial C+f1 + C2+f2 .. Cnfn
+b^d leaf nodes
+
+chess
+standard moves 50 per player = 100 total
+10^120 leaf nodes
+
+seconds in the year 

@@ -14,7 +14,7 @@ from util import INFINITY
 #      1. MM will play better than AB.
 #      2. AB will play better than MM.
 #      3. They will play with the same level of skill.
-ANSWER1 = 0
+ANSWER1 = 3
 
 # 1.2. Two computerized players are playing a game with a time limit. Player MM
 # does minimax search with iterative deepening, and player AB does alpha-beta
@@ -24,7 +24,7 @@ ANSWER1 = 0
 #   1. MM will play better than AB.
 #   2. AB will play better than MM.
 #   3. They will play with the same level of skill.
-ANSWER2 = 0
+ANSWER2 = 2
 
 ### 2. Connect Four
 from connectfour import *
@@ -44,12 +44,14 @@ import tree_searcher
 #run_game(basic_player, human_player)
 
 ## Or watch the computer play against itself:
-run_game(basic_player, basic_player)
+#run_game(basic_player, basic_player)
 
 ## Change this evaluation function so that it tries to win as soon as possible,
 ## or lose as late as possible, when it decides that one side is certain to win.
 ## You don't have to change how it evaluates non-winning positions.
 
+# TODO: handle gaps in long chain, and do we need more pieces vertically to get there?      
+# TODO: do we care what the oponent is doing or does alphabeta cover that?
 def focused_evaluate(board):
     """
     Given a board, return a numeric rating of how good
@@ -57,7 +59,46 @@ def focused_evaluate(board):
     A return value >= 1000 means that the current player has won;
     a return value <= -1000 means that the current player has lost
     """    
-    raise NotImplementedError
+    if board.is_game_over():
+        # If the game has been won, we know that it must have been
+        # won or ended by the previous move.
+        # The previous move was made by our opponent.
+        # Therefore, we can't have won, so return -1000.
+        # (note that this causes a tie to be treated like a loss)
+        score = -1000
+        return score
+    else:
+        currentPlayerId = board.get_current_player_id()
+        otherPlayerId = board.get_other_player_id()
+
+        score = scoreBoard(board, currentPlayerId, otherPlayerId)
+
+        positionsAvailable = 42 - board.num_tokens_on_board()
+
+        #is current player losing on this board?
+        if (positionsAvailable < 21 and score < 0):
+          blockingScore = scoreBoard(board, otherPlayerId, currentPlayerId)
+          assert blockingScore != None
+          return blockingScore * -1
+        else:
+          assert score != None
+          return score        
+
+
+def scoreBoard(board, currentPlayerId, otherPlayerId):
+  score = board.longest_chain(currentPlayerId) * 10        
+  # Prefer having your pieces in the center of the board.
+  # TODO: handle gaps in long chain, and do we need more pieces vertically to get there?      
+  # TODO: do we care what the oponent is doing or does alphabeta cover that?
+  for row in range(6):
+      for col in range(7):
+              #subtract more from current player if farther from middle
+          if board.get_cell(row, col) == currentPlayerId:
+              score -= abs(3-col)
+              #add more to current player if opponent is farther from middle
+          elif board.get_cell(row, col) == otherPlayerId:
+              score += abs(3-col)
+  return score
 
 
 ## Create a "player" function that uses the focused_evaluate function
@@ -81,8 +122,21 @@ def alpha_beta_search(board, depth,
                       # The default functions set here will work
                       # for connect_four.
                       get_next_moves_fn=get_all_next_moves,
-		      is_terminal_fn=is_terminal):
-    raise NotImplementedError
+		      is_terminal_fn=is_terminal,
+          verbose = True):
+    best_val = None
+    
+    for move, new_board in get_next_moves_fn(board):
+        val = -1 * minimax_find_board_value(new_board, depth-1, eval_fn,
+                                            get_next_moves_fn,
+                                            is_terminal_fn)
+        if best_val == None or val > best_val[0]:
+            best_val = (val, move, new_board)
+            
+    # if verbose:
+    #     print "ALPHA_BETA: Decided on column %d with rating %d" % (best_val[1], best_val[0])
+
+    return best_val[1]
 
 ## Now you should be able to search twice as deep in the same amount of time.
 ## (Of course, this alpha-beta-player won't work until you've defined
@@ -172,9 +226,9 @@ def run_test_tree_search(search, board, depth):
 COMPETE = (None)
 
 ## The standard survey questions.
-HOW_MANY_HOURS_THIS_PSET_TOOK = ""
-WHAT_I_FOUND_INTERESTING = ""
-WHAT_I_FOUND_BORING = ""
-NAME = ""
-EMAIL = ""
+HOW_MANY_HOURS_THIS_PSET_TOOK = "8"
+WHAT_I_FOUND_INTERESTING = "stuff"
+WHAT_I_FOUND_BORING = "stuff"
+NAME = "aasdf"
+EMAIL = "asdf@asdf.org"
 

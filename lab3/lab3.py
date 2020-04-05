@@ -114,6 +114,47 @@ quick_to_win_player = lambda board: minimax(board, depth=4,
 ## counting the number of static evaluations you make.
 ##
 ## You can use minimax() in basicplayer.py as an example.
+def alphabeta_max_value(board, depth, alpha, beta, eval_fn,
+                             get_next_moves_fn=get_all_next_moves,
+                             is_terminal_fn=is_terminal):
+    """
+    Minimax helper function: Return the minimax value of a particular board,
+    given a particular depth to estimate to
+    """
+    if is_terminal_fn(depth, board):
+        return eval_fn(board)
+
+    best_val = NEG_INFINITY
+    
+    for move, new_board in get_next_moves_fn(board):
+        v = max(best_val, alphabeta_min_value(new_board, depth-1, eval_fn,
+                                            get_next_moves_fn, is_terminal_fn, alpha, beta))
+        best_val = max(v, alpha)
+        if (alpha > beta):
+          return beta
+
+    return best_val
+
+def alphabeta_min_value(board, depth, alpha, beta, eval_fn,
+                            get_next_moves_fn=get_all_next_moves,
+                            is_terminal_fn=is_terminal):
+  """
+  Minimax helper function: Return the minimax value of a particular board,
+  given a particular depth to estimate to
+  """
+  if is_terminal_fn(depth, board):
+      return eval_fn(board)
+
+  best_val = None
+  
+  for move, new_board in get_next_moves_fn(board):
+      val = -1 * alphabeta_max_value(new_board, depth-1, NEG_INFINITY, INFINITY, eval_fn,
+                                          get_next_moves_fn, is_terminal_fn)
+      if best_val == None or val > best_val:
+          best_val = val
+
+  return best_val
+
 def alpha_beta_search(board, depth,
                       eval_fn,
                       # NOTE: You should use get_next_moves_fn when generating
@@ -123,13 +164,26 @@ def alpha_beta_search(board, depth,
                       # for connect_four.
                       get_next_moves_fn=get_all_next_moves,
 		      is_terminal_fn=is_terminal,
-          verbose = True):
+          verbose = True,
+          alpha=INFINITY,
+          beta=NEG_INFINITY):
+    """
+    Do a minimax search to the specified depth on the specified board.
+
+    board -- the ConnectFourBoard instance to evaluate
+    depth -- the depth of the search tree (measured in maximum distance from a leaf to the root)
+    eval_fn -- (optional) the evaluation function to use to give a value to a leaf of the tree; see "focused_evaluate" in the lab for an example
+
+    Returns an integer, the column number of the column that the search determines you should add a token to
+    """
     best_val = None
     
     for move, new_board in get_next_moves_fn(board):
-        val = -1 * minimax_find_board_value(new_board, depth-1, eval_fn,
+        val = -1 * alphabeta_max_value(new_board, depth-1, eval_fn,
                                             get_next_moves_fn,
-                                            is_terminal_fn)
+                                            is_terminal_fn,
+                                            alpha,
+                                            beta)
         if best_val == None or val > best_val[0]:
             best_val = (val, move, new_board)
             

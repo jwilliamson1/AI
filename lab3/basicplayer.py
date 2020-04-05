@@ -83,10 +83,9 @@ def minimax(board, depth, eval_fn = basic_evaluate,
     best_val = None
     
     for move, new_board in get_next_moves_fn(board):
-        boardValue = minimax_find_board_value(new_board, depth-1, eval_fn,
-                                              get_next_moves_fn,
-                                              is_terminal_fn)
-        val = -1 * boardValue
+        val = -1 * minimax_find_board_value(new_board, depth-1, eval_fn,
+                                            get_next_moves_fn,
+                                            is_terminal_fn)
         if best_val == None or val > best_val[0]:
             best_val = (val, move, new_board)
             

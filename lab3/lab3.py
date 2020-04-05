@@ -127,11 +127,11 @@ def alphabeta_max_value(board, depth, alpha, beta, eval_fn,
     best_val = NEG_INFINITY
     
     for move, new_board in get_next_moves_fn(board):
-        v = max(best_val, alphabeta_min_value(new_board, depth-1, eval_fn,
-                                            get_next_moves_fn, is_terminal_fn, alpha, beta))
-        best_val = max(v, alpha)
-        if (alpha > beta):
-          return beta
+        best_val = max(best_val, alphabeta_min_value(new_board, depth-1, alpha, beta, eval_fn,
+                                            get_next_moves_fn, is_terminal_fn))
+        alpha = max(best_val, alpha)
+        if (alpha >= beta):
+          return alpha
 
     return best_val
 
@@ -145,13 +145,14 @@ def alphabeta_min_value(board, depth, alpha, beta, eval_fn,
   if is_terminal_fn(depth, board):
       return eval_fn(board)
 
-  best_val = None
+  best_val = INFINITY
   
   for move, new_board in get_next_moves_fn(board):
-      val = -1 * alphabeta_max_value(new_board, depth-1, NEG_INFINITY, INFINITY, eval_fn,
-                                          get_next_moves_fn, is_terminal_fn)
-      if best_val == None or val > best_val:
-          best_val = val
+      best_val = min(best_val, alphabeta_max_value(new_board, depth-1, alpha, beta, eval_fn,
+                                          get_next_moves_fn, is_terminal_fn))
+      beta = min(best_val, beta)
+      if(beta <= alpha):
+        return beta
 
   return best_val
 
@@ -179,11 +180,9 @@ def alpha_beta_search(board, depth,
     best_val = None
     
     for move, new_board in get_next_moves_fn(board):
-        val = -1 * alphabeta_max_value(new_board, depth-1, eval_fn,
+        val = -1 * alphabeta_max_value(new_board, depth-1, alpha, beta, eval_fn,
                                             get_next_moves_fn,
-                                            is_terminal_fn,
-                                            alpha,
-                                            beta)
+                                            is_terminal_fn)
         if best_val == None or val > best_val[0]:
             best_val = (val, move, new_board)
             
@@ -277,7 +276,7 @@ def run_test_tree_search(search, board, depth):
 ## Do you want us to use your code in a tournament against other students? See
 ## the description in the problem set. The tournament is completely optional
 ## and has no effect on your grade.
-COMPETE = (None)
+COMPETE = (False)
 
 ## The standard survey questions.
 HOW_MANY_HOURS_THIS_PSET_TOOK = "8"

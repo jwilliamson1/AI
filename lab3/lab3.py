@@ -166,8 +166,8 @@ def alpha_beta_search(board, depth,
                       get_next_moves_fn=get_all_next_moves,
 		      is_terminal_fn=is_terminal,
           verbose = True,
-          alpha=INFINITY,
-          beta=NEG_INFINITY):
+          alpha=NEG_INFINITY,
+          beta=INFINITY):
     """
     Do a minimax search to the specified depth on the specified board.
 

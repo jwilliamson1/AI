@@ -127,21 +127,21 @@ make_test(type = 'FUNCTION',
           name = 'run_test_tree_search'
           )
 
-TEST_TREE_2 = tree_searcher.make_tree(("A", None,
-                                       ("B", None,
-                                        ("C", None,
-                                         ("D", 6),
+TEST_TREE_2 = tree_searcher.make_tree(("A", None,  # max choose B 6
+                                       ("B", None, #max 6
+                                        ("C", None, #min choose 6 
+                                         ("D", 6), #max 6
                                          ("E", 4)),
-                                        ("F", None,
-                                         ("G", 8),
+                                        ("F", None, #min
+                                         ("G", 8), #max 8
                                          ("H", 6))
                                         ),
-                                       ("I", None,
-                                        ("J", None,
-                                         ("K", 4),
+                                       ("I", None, #max 2
+                                        ("J", None, #min
+                                         ("K", 4), #max 4
                                          ("L", 0)),
-                                        ("M", None,
-                                         ("N", 2),
+                                        ("M", None, #min choose 2
+                                         ("N", 2), #max 2
                                          ("O", 2))
                                         )
                                        ))
@@ -161,24 +161,24 @@ make_test(type = 'FUNCTION',
           name = 'run_test_tree_search'
           )
 
-TEST_TREE_3 = tree_searcher.make_tree(("A", None,
-                                       ("B", None,
-                                        ("E", None,
-                                         ("K", 8),
-                                         ("L", 2)),
-                                        ("F", 6)
+TEST_TREE_3 = tree_searcher.make_tree(("A", None, #max 6 
+                                       ("B", None, #max
+                                        ("E", None, #min 6
+                                         ("K", 8), #max
+                                         ("L", 2)), 
+                                        ("F", 6) #min should see this getting returned
                                         ),
-                                       ("C", None,
-                                        ("G", None,
-                                         ("M", None,
-                                          ("S", 4),
+                                       ("C", None, #max
+                                        ("G", None, #min
+                                         ("M", None, #max 4
+                                          ("S", 4), #min
                                           ("T", 5)),
-                                         ("N", 3)),
-                                        ("H", None,
-                                         ("O", 9),
-                                         ("P", None,
+                                         ("N", 3)), #max 3
+                                        ("H", None, #min
+                                         ("O", 9), #max
+                                         ("P", None, #max
                                           ("U", 10),
-                                          ("V", 8))
+                                          ("V", 8)) #min
                                          ),
                                         ),
                                        ("D", None,

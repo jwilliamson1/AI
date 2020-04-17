@@ -83,10 +83,32 @@ def focused_evaluate(board):
         else:
           assert score != None
           return score        
-
+          
+def onEdge(listOfTuples):
+  for tup in listOfTuples:
+    return tup[0] == 0 or tup[1] == 0 or tup[1] == 6
 
 def scoreBoard(board, currentPlayerId, otherPlayerId):
   score = board.longest_chain(currentPlayerId) * 10        
+  opScore = board.longest_chain(otherPlayerId) 
+
+  if opScore == 3:
+    score -= opScore * 20
+
+  if opScore == 3:
+    score -= opScore * 30
+
+  cpChains = board.chain_cells(currentPlayerId)
+  opChains = board.chain_cells(otherPlayerId)
+
+  for chain in cpChains:
+    if len(chain) == 3 and onEdge(chain):
+      score -= 350
+  
+  for chain in opChains:
+    if len(chain) == 3 and onEdge(chain):
+      score += 350
+
   # Prefer having your pieces in the center of the board.
   # TODO: handle gaps in long chain, and do we need more pieces vertically to get there?      
   # TODO: do we care what the oponent is doing or does alphabeta cover that?
@@ -95,9 +117,16 @@ def scoreBoard(board, currentPlayerId, otherPlayerId):
               #subtract more from current player if farther from middle
           if board.get_cell(row, col) == currentPlayerId:
               score -= abs(3-col)
+              if board.get_height_of_column(col) == 4:
+                score -= 200
+              score -= abs(3-row)
               #add more to current player if opponent is farther from middle
           elif board.get_cell(row, col) == otherPlayerId:
               score += abs(3-col)
+              if board.get_height_of_column(col) == 4:
+                score += 200
+              score += abs(3-row)
+
   return score
 
 
@@ -212,13 +241,36 @@ ab_iterative_player = lambda board: \
 ## same depth.
 
 def better_evaluate(board):
-    raise NotImplementedError
+  if board.is_game_over():
+      # If the game has been won, we know that it must have been
+      # won or ended by the previous move.
+      # The previous move was made by our opponent.
+      # Therefore, we can't have won, so return -1000.
+      # (note that this causes a tie to be treated like a loss)
+      score = -1000
+      return score
+  else:
+      currentPlayerId = board.get_current_player_id()
+      otherPlayerId = board.get_other_player_id()
+
+      score = scoreBoard(board, currentPlayerId, otherPlayerId)
+
+      positionsAvailable = 42 - board.num_tokens_on_board()
+
+      #is current player losing on this board?
+      if (positionsAvailable < 21 and score < 0):
+        blockingScore = scoreBoard(board, otherPlayerId, currentPlayerId)
+        assert blockingScore != None
+        return blockingScore * -1
+      else:
+        assert score != None
+        return score        
 
 # Comment this line after you've fully implemented better_evaluate
-better_evaluate = memoize(basic_evaluate)
+#better_evaluate = memoize(basic_evaluate)
 
 # Uncomment this line to make your better_evaluate run faster.
-# better_evaluate = memoize(better_evaluate)
+better_evaluate = memoize(better_evaluate)
 
 # For debugging: Change this if-guard to True, to unit-test
 # your better_evaluate function.

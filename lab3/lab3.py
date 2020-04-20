@@ -89,52 +89,57 @@ def onEdge(listOfTuples):
     return tup[0] == 0 or tup[1] == 0 or tup[1] == 6
 
 def scoreBoard(board, currentPlayerId, otherPlayerId):
-  score = board.longest_chain(currentPlayerId) * 10        
-  opScore = board.longest_chain(otherPlayerId) * 10
+  cpLongest = board.longest_chain(currentPlayerId)
+  opLongest = board.longest_chain(otherPlayerId)
 
-  if opScore == 30:
-    score -= (opScore * 50)
-
+  score = 0
+  
   cpChains = board.chain_cells(currentPlayerId)
   opChains = board.chain_cells(otherPlayerId)
+    
+  if cpLongest == 3 or opLongest == 3:
 
-  for cpChain in cpChains:
-    if len(cpChain) == 3:
-      for col in range(7):
+    for col in range(7):
+    
+      if board.get_height_of_column(col) > 0:
+
         tryWinBoard = board.do_move(col)
 
         newChains = tryWinBoard.chain_cells(currentPlayerId)
+
         for nc in newChains:
+          len1 = len(nc)
+
+          score += 100 * len1
+
           if len(nc) == 4:
+
             score += 5000 
 
-  for opchain in opChains:
-    if len(opchain) == 3:
-      for col in range(7):
-        tryWinBoard = board.do_move(col)
+        if opLongest == 3:
 
-        opNewChains = tryWinBoard.chain_cells(otherPlayerId)
-        for nc in opNewChains:
-          if len(nc) == 4:
-            score -= 10000 
+          for col2 in range(7):
+
+            if tryWinBoard.get_height_of_column(col2) > 0:
+
+              openentTryWin = board.do_move(col2)
+
+              newOpChains = openentTryWin.chain_cells(otherPlayerId)
+
+              for nc2 in newOpChains:
+                len2 = len(nc)
+
+                score -= 100 * len2
+
+                if len(nc2) == 4:
+                  print "Opponent winning!!!"
+                  score -= 100000000
 
   # Prefer having your pieces in the center of the board.
   # TODO: handle gaps in long chain, and do we need more pieces vertically to get there?      
   # TODO: do we care what the oponent is doing or does alphabeta cover that?
   for row in range(6):      
       for col in range(7):
-          height = board.get_height_of_column(col)      
-          if height < 2:
-            topPlayer = board.get_top_elt_in_column(col)
-            belowTop = board.get_cell(row-1, col)
-            nextBelowTop = board.get_cell(row-2, col)
-
-            if currentPlayerId == topPlayer and topPlayer != belowTop:
-              if belowTop == nextBelowTop:
-                score += 5
-              else:
-                score -= 5
-
               #subtract more from current player if farther from middle
           if board.get_cell(row, col) == currentPlayerId:
               score -= abs(3-col)
@@ -152,7 +157,7 @@ quick_to_win_player = lambda board: minimax(board, depth=4,
                                             eval_fn=focused_evaluate)
 
 ## You can try out your new evaluation function by uncommenting this line:
-run_game(basic_player, quick_to_win_player)
+#run_game(basic_player, quick_to_win_player)
 
 ## Write an alpha-beta-search procedure that acts like the minimax-search
 ## procedure, but uses alpha-beta pruning to avoid searching bad ideas
@@ -271,17 +276,17 @@ def better_evaluate(board):
       otherPlayerId = board.get_other_player_id()
 
       score = scoreBoard(board, currentPlayerId, otherPlayerId)
+      return score
+      # positionsAvailable = 42 - board.num_tokens_on_board()
 
-      positionsAvailable = 42 - board.num_tokens_on_board()
-
-      #is current player losing on this board?
-      if (positionsAvailable < 21 and score < 0):
-        blockingScore = scoreBoard(board, otherPlayerId, currentPlayerId)
-        assert blockingScore != None
-        return blockingScore * -1
-      else:
-        assert score != None
-        return score        
+      # #is current player losing on this board?
+      # if (positionsAvailable < 21 and score < 0):
+      #   blockingScore = scoreBoard(board, otherPlayerId, currentPlayerId)
+      #   assert blockingScore != None
+      #   return blockingScore * -1
+      # else:
+      #   assert score != None
+      #   return score        
 
 # Comment this line after you've fully implemented better_evaluate
 #better_evaluate = memoize(basic_evaluate)

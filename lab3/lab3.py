@@ -114,26 +114,7 @@ def scoreBoard(board, currentPlayerId, otherPlayerId):
 
           if len(nc) == 4:
 
-            score += 5000 
-
-        if opLongest == 3:
-
-          for col2 in range(7):
-
-            if tryWinBoard.get_height_of_column(col2) > 0:
-
-              openentTryWin = board.do_move(col2)
-
-              newOpChains = openentTryWin.chain_cells(otherPlayerId)
-
-              for nc2 in newOpChains:
-                len2 = len(nc)
-
-                score -= 100 * len2
-
-                if len(nc2) == 4:
-                  print "Opponent winning!!!"
-                  score -= 100000000
+            score += 5000
 
   # Prefer having your pieces in the center of the board.
   # TODO: handle gaps in long chain, and do we need more pieces vertically to get there?      

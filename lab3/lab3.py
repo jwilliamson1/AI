@@ -72,17 +72,17 @@ def focused_evaluate(board):
         otherPlayerId = board.get_other_player_id()
 
         score = scoreBoard(board, currentPlayerId, otherPlayerId)
+        return score
+        # positionsAvailable = 42 - board.num_tokens_on_board()
 
-        positionsAvailable = 42 - board.num_tokens_on_board()
-
-        #is current player losing on this board?
-        if (positionsAvailable < 21 and score < 0):
-          blockingScore = scoreBoard(board, otherPlayerId, currentPlayerId)
-          assert blockingScore != None
-          return blockingScore * -1
-        else:
-          assert score != None
-          return score        
+        # #is current player losing on this board?
+        # if (positionsAvailable < 21 and score < 0):
+        #   blockingScore = scoreBoard(board, otherPlayerId, currentPlayerId)
+        #   assert blockingScore != None
+        #   return blockingScore * -1
+        # else:
+        #   assert score != None
+        #   return score        
           
 def onEdge(listOfTuples):
   for tup in listOfTuples:
@@ -90,41 +90,58 @@ def onEdge(listOfTuples):
 
 def scoreBoard(board, currentPlayerId, otherPlayerId):
   score = board.longest_chain(currentPlayerId) * 10        
-  opScore = board.longest_chain(otherPlayerId) 
+  opScore = board.longest_chain(otherPlayerId) * 10
 
-  if opScore == 3:
-    score -= opScore * 20
-
-  if opScore == 3:
-    score -= opScore * 30
+  if opScore == 30:
+    score -= (opScore * 50)
 
   cpChains = board.chain_cells(currentPlayerId)
   opChains = board.chain_cells(otherPlayerId)
 
-  for chain in cpChains:
-    if len(chain) == 3 and onEdge(chain):
-      score -= 350
-  
-  for chain in opChains:
-    if len(chain) == 3 and onEdge(chain):
-      score += 350
+  for cpChain in cpChains:
+    if len(cpChain) == 3:
+      for col in range(7):
+        tryWinBoard = board.do_move(col)
+
+        newChains = tryWinBoard.chain_cells(currentPlayerId)
+        for nc in newChains:
+          if len(nc) == 4:
+            score += 5000 
+
+  for opchain in opChains:
+    if len(opchain) == 3:
+      for col in range(7):
+        tryWinBoard = board.do_move(col)
+
+        opNewChains = tryWinBoard.chain_cells(otherPlayerId)
+        for nc in opNewChains:
+          if len(nc) == 4:
+            score -= 10000 
 
   # Prefer having your pieces in the center of the board.
   # TODO: handle gaps in long chain, and do we need more pieces vertically to get there?      
   # TODO: do we care what the oponent is doing or does alphabeta cover that?
-  for row in range(6):
+  for row in range(6):      
       for col in range(7):
+          height = board.get_height_of_column(col)      
+          if height < 2:
+            topPlayer = board.get_top_elt_in_column(col)
+            belowTop = board.get_cell(row-1, col)
+            nextBelowTop = board.get_cell(row-2, col)
+
+            if currentPlayerId == topPlayer and topPlayer != belowTop:
+              if belowTop == nextBelowTop:
+                score += 5
+              else:
+                score -= 5
+
               #subtract more from current player if farther from middle
           if board.get_cell(row, col) == currentPlayerId:
               score -= abs(3-col)
-              if board.get_height_of_column(col) == 4:
-                score -= 200
               score -= abs(3-row)
               #add more to current player if opponent is farther from middle
           elif board.get_cell(row, col) == otherPlayerId:
               score += abs(3-col)
-              if board.get_height_of_column(col) == 4:
-                score += 200
               score += abs(3-row)
 
   return score
@@ -135,7 +152,7 @@ quick_to_win_player = lambda board: minimax(board, depth=4,
                                             eval_fn=focused_evaluate)
 
 ## You can try out your new evaluation function by uncommenting this line:
-#run_game(basic_player, quick_to_win_player)
+run_game(basic_player, quick_to_win_player)
 
 ## Write an alpha-beta-search procedure that acts like the minimax-search
 ## procedure, but uses alpha-beta pruning to avoid searching bad ideas

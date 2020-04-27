@@ -223,17 +223,16 @@ def better_evaluate(board):
 def onEdge(listOfTuples):
   for tup in listOfTuples:
     return tup[0] == 0 or tup[1] == 0 or tup[1] == 6
-
+# me = playerNo 2
 def scoreBoard(board, currentPlayerId, otherPlayerId):
     cpLongest = board.longest_chain(currentPlayerId)
-    opLongest
     score = 10 * cpLongest if cpLongest > 1 else 0
     #opChains shouldn't change
     cpChains = filter(lambda x: x > 2, board.chain_cells(currentPlayerId))
     opChains = filter(lambda x: x > 2, board.chain_cells(otherPlayerId))
 
-    score += evalChain(board, cpChains, 0)
-    score += evalChain(board, opChains, currentPlayerId)
+    score += evalChain(board, cpChains, 0, 10)
+    score += evalChain(board, opChains, currentPlayerId, 20)
 
     # for col in range(7):
 
@@ -259,7 +258,7 @@ def scoreBoard(board, currentPlayerId, otherPlayerId):
                 score += abs(3-row)
 
     return score
-def evalChain(board, otherPlayerNewChains, expectedAdjacentPlayerId):
+def evalChain(board, otherPlayerNewChains, expectedAdjacentPlayerId, factor):
   score = 0
   for otherPlayerChain in otherPlayerNewChains:
       chainLength = len(otherPlayerChain)
@@ -276,41 +275,41 @@ def evalChain(board, otherPlayerNewChains, expectedAdjacentPlayerId):
                   startAdjacent = board.get_cell(startX, startY-1)
                   #check if opponent is next to end
                   if startAdjacent == expectedAdjacentPlayerId:
-                      score += 10 * chainLength
+                      score += factor * chainLength
               if endY < 6:
                   endAdjacent = board.get_cell(endX, endY+1)
                   if  endAdjacent == expectedAdjacentPlayerId:
-                      score += 10 * chainLength
+                      score += factor * chainLength
           elif startY == endY:
               if startX > 0:
                   startAdjacent = board.get_cell(startX-1, startY)
                   #check if opponent is next to end
                   if startAdjacent == expectedAdjacentPlayerId:
-                      score += 10 * chainLength
+                      score += factor * chainLength
               # if endX < 5:
               #     endAdjacent = board.get_cell(endX+1, endY)
               #     if  endAdjacent == currentPlayerId:
-              #         score += 10
+              #         score += factor
               #Diagonal lower left to upper right
           elif startX > endX:
               if endY < 6 and endX > 0:
                   startAdjacent = board.get_cell(endX-1, endY+1)
                   if startAdjacent == expectedAdjacentPlayerId:
-                      score += 10 * chainLength
+                      score += factor * chainLength
               if startY > 0 and startX < 5:
                   startAdjacent = board.get_cell(endX+1, endY-1)
                   if startAdjacent == expectedAdjacentPlayerId:
-                      score += 10 * chainLength
+                      score += factor * chainLength
               #Diagonal upper left to lower right
           elif startX < endX:
             if startX > 0 and startY > 0:
                   startAdjacent = board.get_cell(startX-1, startY-1)
                   if startAdjacent == expectedAdjacentPlayerId:
-                      score += 10 * chainLength
+                      score += factor * chainLength
             if endX < 5 and endY < 6:
                 startAdjacent = board.get_cell(endX+1, endY+1)
                 if startAdjacent == expectedAdjacentPlayerId:
-                    score += 10 * chainLength
+                    score += factor * chainLength
           else: raise Exception("should not be here. ")
   return score
 # Comment this line after you've fully implemented better_evaluate

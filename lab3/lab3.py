@@ -227,22 +227,16 @@ def onEdge(listOfTuples):
 def scoreBoard(board, currentPlayerId, otherPlayerId):
     score = 0
     #opChains shouldn't change
-    #cpChains = filter(lambda x: len(x) > 1, board.chain_cells(currentPlayerId))
+    cpChains = filter(lambda x: len(x) > 1, board.chain_cells(currentPlayerId))
     opChains = filter(lambda x: len(x) > 1, board.chain_cells(otherPlayerId))
 
-    #score = evalChain(board, cpChains, 0, 2)
-    score += evalChain(board, opChains, currentPlayerId, 5)
-  
-    for col in range(7):
+    aggScore = evalChain(board, cpChains, 0, 3)
 
-        if board.get_height_of_column(col) > 0:
+    defScore = evalChain(board, opChains, currentPlayerId, 5)
 
-            tryWinBoard = board.do_move(col)
-
-            newChains = tryWinBoard.chain_cells(currentPlayerId)
-            score += evalChain(tryWinBoard, newChains, 0, 10)
-            # otherPlayerNewChains = tryWinBoard.chain_cells(otherPlayerId)            
-
+    score += aggScore
+    score += defScore
+    print("eval chain scores")
   # Prefer having your pieces in the center of the board.
   # TODO: handle gaps in long chain, and do we need more pieces vertically to get there?      
   # TODO: do we care what the oponent is doing or does alphabeta cover that?

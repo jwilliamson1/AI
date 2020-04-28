@@ -13,7 +13,8 @@ def basic_evaluate(board):
         # (note that this causes a tie to be treated like a loss)
         score = -1000
     else:
-        score = board.longest_chain(board.get_current_player_id()) * 10
+        id = board.get_current_player_id()
+        score = board.longest_chain(id) * 10
         # Prefer having your pieces in the center of the board.
         # TODO: handle gaps in long chain, and do we need more pieces vertically to get there?      
         # TODO: do we care what the oponent is doing or does alphabeta cover that?

@@ -1,0 +1,5 @@
+if make basic player negative then:
+x wins first takes middle
+o takes middle and wins
+x takes middle and wins
+o takes middle

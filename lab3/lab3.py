@@ -83,94 +83,6 @@ def focused_evaluate(board):
         # else:
         #   assert score != None
         #   return score        
-          
-def onEdge(listOfTuples):
-  for tup in listOfTuples:
-    return tup[0] == 0 or tup[1] == 0 or tup[1] == 6
-
-def scoreBoard(board, currentPlayerId, otherPlayerId):
-    cpLongest = board.longest_chain(currentPlayerId)
-    opLongest = board.longest_chain(otherPlayerId)
-
-    score = 10 * cpLongest
-  
-    cpChains = filter(lambda x: x > 2, board.chain_cells(currentPlayerId))
-    opChains = filter(lambda x: x > 2, board.chain_cells(otherPlayerId))
-
-    for col in range(7):
-
-        if board.get_height_of_column(col) > 0:
-
-            tryWinBoard = board.do_move(col)
-
-            newChains = tryWinBoard.chain_cells(currentPlayerId)
-            otherPlayerNewChains = tryWinBoard.chain_cells(otherPlayerId)
-
-            for otherPlayerChain in otherPlayerNewChains:
-                chainLength = len(otherPlayerChain)
-                # only bother with chains bigger than 0
-                if chainLength > 1:
-                    # get ends
-                    endX = otherPlayerChain[0][0]
-                    endY = otherPlayerChain[0][1]
-                    startX = otherPlayerChain[chainLength-1][0]
-                    startY = otherPlayerChain[chainLength-1][1]
-
-                    if startX == endX:
-                        if startY > 0:
-                            startAdjacent = board.get_cell(startX, startY-1)
-                            #check if opponent is next to end
-                            if startAdjacent == currentPlayerId:
-                                score += 10 * chainLength
-                        if endY < 6:
-                            endAdjacent = board.get_cell(endX, endY+1)
-                            if  endAdjacent == currentPlayerId:
-                                score += 10 * chainLength
-
-                    if startY == endY:
-                        if startX > 0:
-                            startAdjacent = board.get_cell(startX-1, startY)
-                            #check if opponent is next to end
-                            if startAdjacent == currentPlayerId:
-                                score += 10 * chainLength
-                        # if endX < 5:
-                        #     endAdjacent = board.get_cell(endX+1, endY)
-                        #     if  endAdjacent == currentPlayerId:
-                        #         score += 10
-                    if startX > endX:
-                        if endY < 6 and endX < 5:
-                            startAdjacent = board.get_cell(endX-1, endY+1)
-                            if startAdjacent == currentPlayerId:
-                                score += 10 * chainLength
-
-            for nc in newChains:
-                
-                len1 = len(nc)
-
-                if len1 > 1:
-
-                    score += 100 * len1
-
-                    if len(nc) == 4:
-
-                        score += 5000
-
-  # Prefer having your pieces in the center of the board.
-  # TODO: handle gaps in long chain, and do we need more pieces vertically to get there?      
-  # TODO: do we care what the oponent is doing or does alphabeta cover that?
-    for row in range(6):      
-        for col in range(7):
-                #subtract more from current player if farther from middle
-            if board.get_cell(row, col) == currentPlayerId:
-                score -= abs(3-col)
-                score -= abs(3-row)
-                #add more to current player if opponent is farther from middle
-            elif board.get_cell(row, col) == otherPlayerId:
-                score += abs(3-col)
-                score += abs(3-row)
-
-    return score
-
 
 ## Create a "player" function that uses the focused_evaluate function
 quick_to_win_player = lambda board: minimax(board, depth=4,
@@ -306,8 +218,94 @@ def better_evaluate(board):
       #   return blockingScore * -1
       # else:
       #   assert score != None
-      #   return score        
+      #   return score       
+      #  
+def onEdge(listOfTuples):
+  for tup in listOfTuples:
+    return tup[0] == 0 or tup[1] == 0 or tup[1] == 6
+# me = playerNo 2
+def scoreBoard(board, currentPlayerId, otherPlayerId):
+    score = 0
+    #opChains shouldn't change
+    cpChains = filter(lambda x: len(x) > 1, board.chain_cells(currentPlayerId))
+    opChains = filter(lambda x: len(x) > 1, board.chain_cells(otherPlayerId))
 
+    aggScore = evalChain(board, cpChains, 0, 10)
+
+    defScore = evalChain(board, opChains, currentPlayerId, 20)
+
+    score += aggScore
+    score += defScore
+    #print("eval chain scores")
+  # Prefer having your pieces in the center of the board.
+  # TODO: handle gaps in long chain, and do we need more pieces vertically to get there?      
+  # TODO: do we care what the oponent is doing or does alphabeta cover that?
+    for row in range(6):      
+        for col in range(7):
+                #subtract more from current player if farther from middle
+            if board.get_cell(row, col) == currentPlayerId:
+                score -= abs(3-col)
+                score -= abs(3-row)
+                #add more to current player if opponent is farther from middle
+            elif board.get_cell(row, col) == otherPlayerId:
+                score += abs(3-col)
+                score += abs(3-row)
+
+    return score
+def evalChain(board, otherPlayerNewChains, expectedAdjacentPlayerId, factor):
+  score = 0
+  for otherPlayerChain in otherPlayerNewChains:
+      chainLength = len(otherPlayerChain)
+      # only bother with chains bigger than 0
+      if chainLength > 1:
+          # get ends
+          endX = otherPlayerChain[0][0]
+          endY = otherPlayerChain[0][1]
+          startX = otherPlayerChain[chainLength-1][0]
+          startY = otherPlayerChain[chainLength-1][1]
+      #Horizontal
+          if startX == endX:
+              if startY > 0:
+                  startAdjacent = board.get_cell(startX, startY-1)
+                  #check if opponent is next to end
+                  if startAdjacent == expectedAdjacentPlayerId:
+                      score += factor * chainLength
+              if endY < 6:
+                  endAdjacent = board.get_cell(endX, endY+1)
+                  if  endAdjacent == expectedAdjacentPlayerId:
+                      score += factor * chainLength
+          elif startY == endY:
+              if startX > 0:
+                  startAdjacent = board.get_cell(startX-1, startY)
+                  #check if opponent is next to end
+                  if startAdjacent == expectedAdjacentPlayerId:
+                      score += factor * chainLength
+              # if endX < 5:
+              #     endAdjacent = board.get_cell(endX+1, endY)
+              #     if  endAdjacent == currentPlayerId:
+              #         score += factor
+              #Diagonal lower left to upper right
+          elif startX > endX:
+              if endY < 6 and endX > 0:
+                  startAdjacent = board.get_cell(endX-1, endY+1)
+                  if startAdjacent == expectedAdjacentPlayerId:
+                      score += factor * chainLength
+              if startY > 0 and startX < 5:
+                  startAdjacent = board.get_cell(endX+1, endY-1)
+                  if startAdjacent == expectedAdjacentPlayerId:
+                      score += factor * chainLength
+              #Diagonal upper left to lower right
+          elif startX < endX:
+            if startX > 0 and startY > 0:
+                  startAdjacent = board.get_cell(startX-1, startY-1)
+                  if startAdjacent == expectedAdjacentPlayerId:
+                      score += factor * chainLength
+            if endX < 5 and endY < 6:
+                startAdjacent = board.get_cell(endX+1, endY+1)
+                if startAdjacent == expectedAdjacentPlayerId:
+                    score += factor * chainLength
+          else: raise Exception("should not be here. ")
+  return score
 # Comment this line after you've fully implemented better_evaluate
 #better_evaluate = memoize(basic_evaluate)
 

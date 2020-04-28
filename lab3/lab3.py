@@ -244,10 +244,12 @@ def scoreBoard(board, currentPlayerId, otherPlayerId):
         for col in range(7):
                 #subtract more from current player if farther from middle
             if board.get_cell(row, col) == currentPlayerId:
-                score += abs(3-col)
+                score -= abs(3-col)
+                score -= abs(2-row)
                 #add more to current player if opponent is farther from middle
             elif board.get_cell(row, col) == otherPlayerId:
-                score -= abs(3-col)
+                score += abs(3-col)
+                score += abs(2-row)
 
     return score
 def evalChain(board, otherPlayerNewChains, expectedAdjacentPlayerId, factor):
@@ -267,17 +269,29 @@ def evalChain(board, otherPlayerNewChains, expectedAdjacentPlayerId, factor):
                   startAdjacent = board.get_cell(startX, startY-1)
                   #check if opponent is next to end
                   if startAdjacent == expectedAdjacentPlayerId:
+<<<<<<< HEAD
                       score += factor 
               if endY < 6:
                   endAdjacent = board.get_cell(endX, endY+1)
                   if  endAdjacent == expectedAdjacentPlayerId:
                       score += factor 
+=======
+                      score += factor ^ chainLength
+              if endY < 6:
+                  endAdjacent = board.get_cell(endX, endY+1)
+                  if  endAdjacent == expectedAdjacentPlayerId:
+                      score += factor ^ chainLength
+>>>>>>> 73bbcea7984af969313b3c70aeda7b42dc62d476
           elif startY == endY:
               if startX > 0:
                   startAdjacent = board.get_cell(startX-1, startY)
                   #check if opponent is next to end
                   if startAdjacent == expectedAdjacentPlayerId:
+<<<<<<< HEAD
                       score += factor 
+=======
+                      score += factor ^ chainLength
+>>>>>>> 73bbcea7984af969313b3c70aeda7b42dc62d476
               # if endX < 5:
               #     endAdjacent = board.get_cell(endX+1, endY)
               #     if  endAdjacent == currentPlayerId:
@@ -287,21 +301,37 @@ def evalChain(board, otherPlayerNewChains, expectedAdjacentPlayerId, factor):
               if endY < 6 and endX > 0:
                   startAdjacent = board.get_cell(endX-1, endY+1)
                   if startAdjacent == expectedAdjacentPlayerId:
+<<<<<<< HEAD
                       score += factor 
               if startY > 0 and startX < 5:
                   startAdjacent = board.get_cell(endX+1, endY-1)
                   if startAdjacent == expectedAdjacentPlayerId:
                       score += factor 
+=======
+                      score += factor ^ chainLength
+              if startY > 0 and startX < 5:
+                  startAdjacent = board.get_cell(endX+1, endY-1)
+                  if startAdjacent == expectedAdjacentPlayerId:
+                      score += factor ^ chainLength
+>>>>>>> 73bbcea7984af969313b3c70aeda7b42dc62d476
               #Diagonal upper left to lower right
           elif startX < endX:
             if startX > 0 and startY > 0:
                   startAdjacent = board.get_cell(startX-1, startY-1)
                   if startAdjacent == expectedAdjacentPlayerId:
+<<<<<<< HEAD
                       score += factor 
             if endX < 5 and endY < 6:
                 startAdjacent = board.get_cell(endX+1, endY+1)
                 if startAdjacent == expectedAdjacentPlayerId:
                     score += factor 
+=======
+                      score += factor ^ chainLength
+            if endX < 5 and endY < 6:
+                startAdjacent = board.get_cell(endX+1, endY+1)
+                if startAdjacent == expectedAdjacentPlayerId:
+                    score += factor ^ chainLength
+>>>>>>> 73bbcea7984af969313b3c70aeda7b42dc62d476
           else: raise Exception("should not be here. ")
   return score
 # Comment this line after you've fully implemented better_evaluate
